@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عيد ميلاد سعيد سيدرا! ✨</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Tajawal & Cairo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            background: radial-gradient(circle at center, #2e1065, #0f051d, #020005);
+            overflow-x: hidden;
+        }
+
+        /* Floating Animation for Balloons & Stars */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .delay-1 { animation-delay: 1.5s; }
+        .delay-2 { animation-delay: 3s; }
+        .delay-3 { animation-delay: 4.5s; }
+
+        /* Twinkling Stars */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .star {
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        /* Gift Box 3D Flip Effect */
+        .gift-box {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .gift-inner {
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .gift-box:hover .gift-inner {
+            transform: translateY(-10px) rotateY(10deg);
+        }
+
+        .gift-open .gift-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f051d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #db2777;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
+
+    <!-- Decorative Stars background -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden z-0" id="starfield"></div>
+
+    <!-- Music Player Controls Fixed Top -->
+    <div class="fixed top-4 left-4 z-50">
+        <button onclick="playBirthdayTune()" id="musicBtn" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold p-3 rounded-full shadow-lg transition duration-300 flex items-center gap-2 transform hover:scale-110 active:scale-95">
+            <i id="musicIcon" class="fas fa-music animate-bounce"></i>
+            <span class="text-xs font-bold hidden sm:inline">اعزف لحن ميلاد سيدرا ♪</span>
+        </button>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="container mx-auto px-4 py-8 relative z-10 flex-grow flex flex-col items-center justify-center">
+
+        <!-- HEADER SECTION -->
+        <header class="text-center mb-10 mt-6 max-w-2xl floating-element">
+            <span class="bg-pink-500/20 text-pink-300 border border-pink-500/30 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3 inline-block">
+                🎉 اليوم نُطفئ شمعة جديدة لشخص مميز جداً
+            </span>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tight mb-4 bg-gradient-to-r from-pink-400 via-purple-300 to-amber-300 bg-clip-text text-transparent drop-shadow-sm">
+                كل عام وأنتِ بخير يا سيدرا! ❤️
+            </h1>
+            <p class="text-lg md:text-xl text-purple-200 font-light leading-relaxed px-4">
+                بمناسبة عيد ميلادكِ السعيد، قمت بصنع هذا الفضاء الرقمي الساحر المخصص لكِ وحدكِ للاحتفال بيومكِ المميّز!
+            </p>
+        </header>
+
+        <!-- CAKE SECTION (INTERACTIVE) -->
+        <section class="w-full max-w-md bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 mb-12 text-center shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-pink-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <h2 class="text-2xl font-bold text-pink-300 mb-2">🎂 كعكة الأمنيات السحرية</h2>
+            <p class="text-xs text-purple-200 mb-6">اضغطي على الشمعة لتتمني أمنية وتطفئيها!</p>
+
+            <!-- Interactive Cake SVG -->
+            <div class="relative w-64 h-64 mx-auto cursor-pointer flex items-center justify-center" onclick="blowCandle()">
+                <svg viewBox="0 0 200 200" class="w-full h-full">
+                    <!-- Plate -->
+                    <ellipse cx="100" cy="160" rx="70" ry="15" fill="#4c1d95" opacity="0.6"/>
+                    <ellipse cx="100" cy="155" rx="65" ry="10" fill="#a78bfa" />
+                    
+                    <!-- Cake Base -->
+                    <rect x="50" y="95" width="100" height="50" rx="8" fill="#ec4899" />
+                    <!-- Frosting Layers -->
+                    <path d="M 50 115 Q 60 125 70 115 Q 80 125 90 115 Q 100 125 110 115 Q 120 125 130 115 Q 140 125 150 115 L 150 95 L 50 95 Z" fill="#fbcfe8" />
+                    <!-- Cake Decor Cream points -->
+                    <circle cx="60" cy="140" r="4" fill="#fdf2f8" />
+                    <circle cx="80" cy="140" r="4" fill="#fdf2f8" />
+                    <circle cx="100" cy="140" r="4" fill="#fdf2f8" />
+                    <circle cx="120" cy="140" r="4" fill="#fdf2f8" />
+                    <circle cx="140" cy="140" r="4" fill="#fdf2f8" />
+                    
+                    <!-- Candle Base -->
+                    <rect x="96" y="65" width="8" height="30" rx="2" fill="#60a5fa" />
+                    <path d="M 96 65 L 104 65 L 104 95 L 96 95 Z" fill="#3b82f6" opacity="0.5"/>
+                    <line x1="100" y1="65" x2="100" y2="58" stroke="#374151" stroke-width="2" />
+
+                    <!-- Candle Flame -->
+                    <g id="candleFlame" class="transition-opacity duration-500">
+                        <!-- Outer Flame -->
+                        <path d="M 100 35 C 93 48 93 58 100 58 C 107 58 107 48 100 35 Z" fill="#f59e0b">
+                            <animate attributeName="opacity" values="0.9;1;0.9" dur="0.5s" repeatCount="indefinite" />
+                        </path>
+                        <!-- Inner Flame -->
+                        <path d="M 100 42 C 96 50 96 56 100 56 C 104 56 104 50 100 42 Z" fill="#ef4444">
+                            <animate attributeName="opacity" values="0.8;1;0.8" dur="0.3s" repeatCount="indefinite" />
+                        </path>
+                        <!-- Glow -->
+                        <circle cx="100" cy="48" r="15" fill="#fcd34d" opacity="0.3" class="animate-pulse" />
+                    </g>
+                </svg>
+
+                <!-- Extinguished Smoke effect placeholder -->
+                <div id="smokeEffect" class="absolute top-[20%] left-[48%] w-4 h-12 bg-white/20 rounded-full blur-sm opacity-0 transition-all duration-1000 pointer-events-none"></div>
+            </div>
+
+            <!-- Cake Message -->
+            <div id="cakeMessage" class="mt-4 text-amber-300 font-bold text-lg h-8">
+                أشعلي الأمنية واضغطي على الكعكة! 💫
+            </div>
+        </section>
+
+        <!-- GIFTS SECTION (INTERACTIVE) -->
+        <section class="w-full max-w-4xl px-4 mb-16">
+            <h2 class="text-3xl font-black text-center text-white mb-2">🎁 صناديق المفاجآت السحرية</h2>
+            <p class="text-center text-purple-300 mb-10 text-sm">اضغطي على الصناديق لتفتحي هداياكِ المعنوية المخبأة!</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Gift 1 -->
+                <div class="gift-box" onclick="openGift(1, this)">
+                    <div class="gift-inner bg-gradient-to-b from-pink-600 to-pink-900 border border-pink-400/20 rounded-2xl p-6 text-center shadow-xl h-64 flex flex-col justify-between items-center relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full transform translate-x-8 -translate-y-8"></div>
+                        <div id="gift1-icon" class="text-5xl text-pink-300 mt-4 transition-transform duration-500">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div id="gift1-content" class="my-4">
+                            <h3 class="font-bold text-xl text-pink-200 mb-1">العلبة الوردي</h3>
+                            <p class="text-xs text-pink-100/70">اضغطي لفتح محتواها</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gift 2 -->
+                <div class="gift-box" onclick="openGift(2, this)">
+                    <div class="gift-inner bg-gradient-to-b from-purple-600 to-purple-900 border border-purple-400/20 rounded-2xl p-6 text-center shadow-xl h-64 flex flex-col justify-between items-center relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full transform translate-x-8 -translate-y-8"></div>
+                        <div id="gift2-icon" class="text-5xl text-purple-300 mt-4 transition-transform duration-500">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div id="gift2-content" class="my-4">
+                            <h3 class="font-bold text-xl text-purple-200 mb-1">العلبة البنفسجية</h3>
+                            <p class="text-xs text-purple-100/70">اضغطي لفتح محتواها</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gift 3 -->
+                <div class="gift-box" onclick="openGift(3, this)">
+                    <div class="gift-inner bg-gradient-to-b from-amber-600 to-amber-900 border border-amber-400/20 rounded-2xl p-6 text-center shadow-xl h-64 flex flex-col justify-between items-center relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full transform translate-x-8 -translate-y-8"></div>
+                        <div id="gift3-icon" class="text-5xl text-amber-300 mt-4 transition-transform duration-500">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div id="gift3-content" class="my-4">
+                            <h3 class="font-bold text-xl text-amber-200 mb-1">العلبة الذهبية</h3>
+                            <p class="text-xs text-amber-100/70">اضغطي لفتح محتواها</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WISH GENERATOR SECTION -->
+        <section class="w-full max-w-2xl bg-gradient-to-r from-purple-950/40 to-pink-950/40 backdrop-blur-md border border-white/10 rounded-3xl p-8 text-center mb-16 shadow-2xl relative">
+            <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-amber-400 rounded-full flex items-center justify-center text-4xl shadow-lg border-4 border-purple-900 animate-pulse cursor-pointer hover:scale-110 transition duration-300" onclick="generateWish()">
+                ⭐
+            </div>
+            <div class="pt-10">
+                <h3 class="text-2xl font-bold text-amber-300 mb-4">نجمة الأمنيات والأقدار السعيدة</h3>
+                <p class="text-sm text-purple-200 mb-6">اضغطي على النجمة الذهبية لتوليد أمنية أو رسالة خاصة لكِ من الكون في هذا اليوم المميّز!</p>
+                <div id="wishDisplay" class="bg-black/40 border border-white/5 rounded-2xl p-6 min-h-[100px] flex items-center justify-center text-lg md:text-xl font-medium text-pink-200 italic transition-all duration-500">
+                    "اضغطي على النجمة بالأعلى لتتلقي رسالة يوم ميلادكِ السحري..."
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER SECTION (DEDICATION & ATTRIBUTION) -->
+    <footer class="w-full relative z-10 border-t border-white/10 bg-black/60 backdrop-blur-md py-8 text-center px-4">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-right md:text-left">
+                <p class="text-lg font-bold bg-gradient-to-r from-pink-400 to-amber-300 bg-clip-text text-transparent">
+                    سنة حلوة يا سيدرا 🎉✨
+                </p>
+                <p class="text-xs text-purple-300 mt-1">
+                    أتمنى أن تكون هذه السنة مليئة بالفرح، النجاح، وتحقيق كل الأحلام والآمال الطموحة.
+                </p>
+            </div>
+            
+            <!-- Dynamic personal signature request: من إعداد قيس جازي -->
+            <div class="bg-white/5 border border-white/10 px-6 py-2.5 rounded-full flex items-center gap-2 shadow-inner">
+                <span class="text-xs text-purple-200">صنع بكل حب وإبداع</span>
+                <span class="w-1.5 h-1.5 bg-pink-500 rounded-full animate-ping"></span>
+                <span class="font-black text-pink-400 text-sm">إعداد وتصميم: قيس جازي</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- POPUP MODALS FOR GIFTS -->
+    <div id="giftModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-gradient-to-b from-purple-900 to-black border-2 border-pink-500/30 rounded-3xl p-6 md:p-8 max-w-md w-full text-center relative shadow-2xl transform scale-95 transition-transform duration-300" id="modalContainer">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-purple-300 hover:text-pink-400 transition text-2xl">
+                <i class="fas fa-times-circle"></i>
+            </button>
+            <div id="modalIcon" class="text-6xl text-pink-400 mb-4 animate-bounce">
+                <i class="fas fa-gift"></i>
+            </div>
+            <h4 id="modalTitle" class="text-2xl font-bold text-amber-300 mb-4">عنوان الهدية</h4>
+            <div id="modalBody" class="text-purple-100 leading-relaxed text-base md:text-lg mb-6">
+                محتوى الهدية...
+            </div>
+            <button onclick="closeModal()" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-2.5 px-6 rounded-full shadow-lg transition duration-300">
+                شكراً لك يا رائع! ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- JS CODE -->
+    <script>
+        // Starfield background generation
+        const starfield = document.getElementById('starfield');
+        const numStars = 80;
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.className = 'absolute bg-white rounded-full star pointer-events-none';
+            const size = Math.random() * 3 + 1;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.opacity = Math.random();
+            star.style.animationDelay = `${Math.random() * 3}s`;
+            // subtle gold/pink/blue stars
+            const colorRand = Math.random();
+            if (colorRand > 0.8) {
+                star.style.backgroundColor = '#fef08a'; // gold
+            } else if (colorRand > 0.6) {
+                star.style.backgroundColor = '#fbcfe8'; // pink
+            } else if (colorRand > 0.4) {
+                star.style.backgroundColor = '#bfdbfe'; // blue
+            }
+            starfield.appendChild(star);
+        }
+
+        // --- INTERACTIVE CAKE LOGIC ---
+        let isCandleLit = true;
+        function blowCandle() {
+            if (!isCandleLit) {
+                // Relight
+                document.getElementById('candleFlame').style.opacity = '1';
+                document.getElementById('cakeMessage').innerHTML = 'أُشعلت الشمعة مجدداً! تمني أمنية جديدة 💫';
+                isCandleLit = true;
+                return;
+            }
+
+            // Blow out
+            document.getElementById('candleFlame').style.opacity = '0';
+            document.getElementById('smokeEffect').style.opacity = '1';
+            setTimeout(() => {
+                document.getElementById('smokeEffect').style.opacity = '0';
+            }, 1000);
+
+            document.getElementById('cakeMessage').innerHTML = '✨ تحققت أمنيتك بإذن الله! عيد ميلاد سعيد! 🎉';
+            isCandleLit = false;
+
+            // Trigger explosive confetti
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.6 }
+            });
+
+            // Play celebratory chime
+            playWinChime();
+        }
+
+        // --- MUSIC GENERATOR (Web Audio API Synthesizer) ---
+        // Generates notes procedurally so we don't rely on external links.
+        let audioCtx = null;
+        let isPlayingTune = false;
+
+        function playBirthdayTune() {
+            if (isPlayingTune) return; // Prevent multiple instances
+            isPlayingTune = true;
+            
+            const musicBtn = document.getElementById('musicBtn');
+            const musicIcon = document.getElementById('musicIcon');
+            musicBtn.classList.add('scale-105');
+            musicIcon.classList.remove('animate-bounce');
+            musicIcon.classList.add('fa-spin');
+
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            // Happy Birthday melody frequencies (in Hz)
+            const notes = [
+                { f: 261.63, d: 0.4 }, // C4
+                { f: 261.63, d: 0.2 }, // C4
+                { f: 293.66, d: 0.6 }, // D4
+                { f: 261.63, d: 0.6 }, // C4
+                { f: 349.23, d: 0.6 }, // F4
+                { f: 329.63, d: 1.0 }, // E4
+                { f: 0, d: 0.2 },      // Rest
+
+                { f: 261.63, d: 0.4 }, // C4
+                { f: 261.63, d: 0.2 }, // C4
+                { f: 293.66, d: 0.6 }, // D4
+                { f: 261.63, d: 0.6 }, // C4
+                { f: 392.00, d: 0.6 }, // G4
+                { f: 349.23, d: 1.0 }, // F4
+                { f: 0, d: 0.2 },      // Rest
+
+                { f: 261.63, d: 0.4 }, // C4
+                { f: 261.63, d: 0.2 }, // C4
+                { f: 523.25, d: 0.6 }, // C5
+                { f: 440.00, d: 0.6 }, // A4
+                { f: 349.23, d: 0.6 }, // F4
+                { f: 329.63, d: 0.6 }, // E4
+                { f: 293.66, d: 1.0 }, // D4
+                { f: 0, d: 0.2 },      // Rest
+
+                { f: 466.16, d: 0.4 }, // Bb4
+                { f: 466.16, d: 0.2 }, // Bb4
+                { f: 440.00, d: 0.6 }, // A4
+                { f: 349.23, d: 0.6 }, // F4
+                { f: 392.00, d: 0.6 }, // G4
+                { f: 349.23, d: 1.2 }  // F4
+            ];
+
+            let time = audioCtx.currentTime;
+
+            notes.forEach(note => {
+                if (note.f > 0) {
+                    playTone(note.f, time, note.d);
+                }
+                time += note.d + 0.05;
+            });
+
+            // Reset UI state after melody finishes
+            setTimeout(() => {
+                isPlayingTune = false;
+                musicBtn.classList.remove('scale-105');
+                musicIcon.classList.remove('fa-spin');
+                musicIcon.classList.add('animate-bounce');
+            }, time * 1000 - audioCtx.currentTime * 1000);
+        }
+
+        function playTone(freq, startTime, duration) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            // Sweet bell-like tone (triangle / sine mix)
+            osc.type = 'triangle';
+            osc.frequency.value = freq;
+
+            // Envelope to make it sound like a beautiful music box
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(0.15, startTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+
+        // Magical Win Chime when candle blown or gift opened
+        function playWinChime() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const time = audioCtx.currentTime;
+            const arpeggio = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+            arpeggio.forEach((freq, idx) => {
+                playTone(freq, time + (idx * 0.12), 0.5);
+            });
+        }
+
+        // --- WISH GENERATOR LOGIC ---
+        const wishes = [
+            "أتمنى لكِ عاماً مليئاً بالضحكات الصافية والأفراح التي لا تنتهي يا سيدرا! ✨",
+            "عساكِ دائماً تزهين بروحكِ العذبة، وتصعدين لأعلى درجات النجاح والتفوق! 🌸",
+            "عيد ميلاد مميّز لأختٍ لا تشبه أحداً، دمتِ لنا نوراً يضيء البيت بابتسامتكِ الرائعة! ❤️",
+            "سيدرا الساحرة، نتمنى لكِ سنة مليئة بتحقيق الطموحات الكبيرة واللحظات السعيدة! 🌟",
+            "إلى القلب الأكثر نقاءً، يوم ميلادكِ فرصة لنخبركِ كم نحن فخورون وسعداء بوجودكِ معنا! 🥰",
+            "عام جديد مقبل يحمل لكِ طاقة متجددة، فرصة جديدة للتألق وصناعة فارق عظيم! 🚀",
+            "أتمنى أن تضحك لكِ الدنيا كما تضحكين، وأن يحميكِ الله في كل خطوة تخطينها! 🙏",
+            "سنة سعيدة جديدة تضاف لعمركِ المديد، دمتِ فخراً وشمعة مضيئة وسعادة مستدامة! 🕯️"
+        ];
+
+        function generateWish() {
+            const wishDisplay = document.getElementById('wishDisplay');
+            // Add scale and opacity effect
+            wishDisplay.style.opacity = '0';
+            wishDisplay.style.transform = 'scale(0.95)';
+
+            setTimeout(() => {
+                const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
+                wishDisplay.innerHTML = randomWish;
+                wishDisplay.style.opacity = '1';
+                wishDisplay.style.transform = 'scale(1)';
+                
+                // Little star sparkle on generation
+                confetti({
+                    particleCount: 20,
+                    spread: 30,
+                    origin: { y: 0.8 }
+                });
+            }, 300);
+        }
+
+        // --- GIFTS LOGIC ---
+        const giftsData = {
+            1: {
+                title: "💖 باقة ورد إلكترونية وودّ عميق",
+                icon: "fa-heart",
+                color: "from-pink-500 to-rose-700",
+                body: "سيدرا الغالية، أهديكِ في هذا الصندوق باقة من المشاعر الصادقة والأمنيات العطرة. أنتِ لستِ مجرد أخت، بل صديقة دافئة نعتز برقتها وجمال حضورها دائماً. أتمنى لكِ السعادة الأبدية."
+            },
+            2: {
+                title: "📚 حكمة وإلهام للعام الجديد",
+                icon: "fa-graduation-cap",
+                color: "from-purple-500 to-indigo-700",
+                body: "بمناسبة عمرك الجديد، أهديكِ تشجيعاً دائماً بأن أحلامكِ الكبيرة تستحق السعي والعمل، وبأنكِ تمتلكين من الذكاء والقدرة ما يجعلكِ تتفوقين في كل مجال تدخلينه. ثقي بنفسكِ دائماً!"
+            },
+            3: {
+                title: "✨ أمنية الذهب والسعادة المطلقة",
+                icon: "fa-star",
+                color: "from-amber-500 to-yellow-600",
+                body: "أهديكِ دعوة خالصة بأن يحيطكِ الله بالصحة الوفيرة وراحة البال، وبأن تكون هذه السنة بوابتكِ الكبرى لتحقيق كل غاياتكِ وطموحاتكِ. تذكري دائماً أن من يحبكِ يدعمكِ دائماً في مسيرتكِ."
+            }
+        };
+
+        function openGift(id, element) {
+            // Apply flip-open style
+            element.classList.add('gift-open');
+            
+            setTimeout(() => {
+                const gift = giftsData[id];
+                const modal = document.getElementById('giftModal');
+                const modalContainer = document.getElementById('modalContainer');
+                
+                document.getElementById('modalTitle').innerHTML = gift.title;
+                document.getElementById('modalBody').innerHTML = gift.body;
+                document.getElementById('modalIcon').className = `text-6xl mb-4 animate-bounce text-pink-400`;
+                document.getElementById('modalIcon').innerHTML = `<i class="fas ${gift.icon}"></i>`;
+                
+                // Style modal theme dynamically based on gift
+                modalContainer.className = `bg-gradient-to-b from-purple-950 to-black border-2 border-pink-500/40 rounded-3xl p-6 md:p-8 max-w-md w-full text-center relative shadow-2xl transform scale-100 transition-transform duration-300`;
+
+                // Show modal
+                modal.classList.remove('pointer-events-none');
+                modal.classList.add('opacity-100');
+                modalContainer.classList.remove('scale-95');
+                modalContainer.classList.add('scale-100');
+
+                // Confetti shower
+                confetti({
+                    particleCount: 100,
+                    spread: 60,
+                    origin: { y: 0.6 }
+                });
+
+                playWinChime();
+            }, 300);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('giftModal');
+            const modalContainer = document.getElementById('modalContainer');
+            
+            modal.classList.add('pointer-events-none');
+            modal.classList.remove('opacity-100');
+            modalContainer.classList.remove('scale-100');
+            modalContainer.classList.add('scale-95');
+
+            // Reset gifts classes on close
+            const giftBoxes = document.querySelectorAll('.gift-box');
+            giftBoxes.forEach(box => box.classList.remove('gift-open'));
+        }
+
+        // Floating dynamic emojis on mousemove / touch for premium interactive feel
+        document.body.addEventListener('click', (e) => {
+            // Only spawn elements sometimes to prevent clutter
+            if (Math.random() > 0.6) return;
+            
+            const emojis = ['🎉', '🎈', '🎂', '✨', '💖', '⭐'];
+            const bubble = document.createElement('div');
+            bubble.className = 'absolute text-2xl pointer-events-none z-50 animate-bounce';
+            bubble.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            bubble.style.left = `${e.pageX - 15}px`;
+            bubble.style.top = `${e.pageY - 15}px`;
+            
+            document.body.appendChild(bubble);
+            
+            // Fade and float upward
+            let opacity = 1;
+            let topPos = e.pageY - 15;
+            const interval = setInterval(() => {
+                opacity -= 0.05;
+                topPos -= 2;
+                bubble.style.opacity = opacity;
+                bubble.style.top = `${topPos}px`;
+                if (opacity <= 0) {
+                    clearInterval(interval);
+                    bubble.remove();
+                }
+            }, 30);
+        });
+    </script>
+</body>
+</html>
+
+```
